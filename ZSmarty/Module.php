@@ -6,10 +6,26 @@ class Module
 {
 	public function __construct()
 	{
-		include __DIR__ . '/libs/Smarty.class.php';
-		
-		//$x = new SmartyStrategy(new SmartyRenderer);
-		//print_r($x);
+		if ( !class_exists('Smarty') )
+		{
+			$file = stream_resolve_include_path('Smarty.class.php');
+			
+			if ( !$file )
+			{
+				$o_file = __DIR__ . '/libs/Smarty.class.php';
+				if ( file_exists( $o_file ) )
+				{
+					$file = $o_file;
+				}
+			}
+			
+			if ( !$file )
+			{
+				throw new \Exception("Could not locate Smarty (In include path OR $o_file)");
+			}
+			
+			require $file;
+		}
 	}
 	
     public function getAutoloaderConfig()
