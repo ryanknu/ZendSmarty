@@ -5,9 +5,9 @@ Designed to *properly* implement Smarty into the Zend Framework, unlike other ap
 
 ## Limitation
 =============
-It is important to note that I could not find a way to remove the ".phtml" from the automatic template name chooser
-(example: /view/application/index/index.php) which sucks. To use Smarty, you'll have to call setTemplate on each
-SmartyModel object you create. Sorry! If you choose all default behavior it will use the PhpRenderer on a .phtml file.
+You need to change all of your template names in your module.config.php to point at .tpl files. The .tpl extension will trigger the
+Smarty view rendering strategy and everything will work as you want. Access to `$this` inside the smarty file is doable via 
+`{$renderer}`, however do note that you won't be able to call all functions on it that you can in a .phtml file.
 
 ## Instructions
 ==========
