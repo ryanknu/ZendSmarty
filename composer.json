@@ -1,5 +1,5 @@
 {
-    "name": "ryanknu/ZendSmarty",
+    "name": "ryanknu/zendsmarty",
     "autoload": {
         "psr-0": {
             "NS_": "/"
