@@ -1,9 +1,9 @@
 {
     "name": "ryanknu/zendsmarty",
-    "version":"0.1",
+    "type": "library",
     "autoload": {
-        "psr-0": {
-            "NS_": "/"
+        "psr-4": {
+            "ZSmarty\\": "ZSmarty/"
         }
     }
 }
