@@ -4,16 +4,22 @@ namespace ZSmarty;
 use Smarty;
 use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Model\ViewModel;
+use Zend\View\Resolver\TemplatePathStack;
+use Zend\View\Resolver\ResolverInterface;
 
 class SmartyRenderer extends PhpRenderer
 {
     protected $_smarty;
+    private $__resolver;
     
     public function __construct($tmplPath = null, $extraParams = array())
     {
     	if ( isset($extraParams['smarty']) && $extraParams['smarty'] instanceof Smarty ) {
 			$this->_smarty = $extraParams['smarty'];
     	}
+        else if ( class_exists('Smarty') ) {
+            $this->_smarty = new Smarty;
+        }
     	else {
     		throw new \Exception('Can not instantiate SmartyRenderer without Smarty engine');
     	}
@@ -25,6 +31,32 @@ class SmartyRenderer extends PhpRenderer
         foreach ($extraParams as $key => $value) {
             $this->_smarty->$key = $value;
         }
+    }
+    
+    /**
+     * Retrieve template name or template resolver
+     *
+     * @param  null|string $name
+     * @return string|Resolver
+     */
+    public function resolver($name = null)
+    {
+        if (null === $this->__resolver) {
+            $this->__resolver = new TemplatePathStack;
+            $this->__resolver->setDefaultSuffix('tpl');
+        }
+
+        if (null !== $name) {
+            // var_dump($this->__resolver);
+            return $this->__resolver->resolve($name, $this);
+        }
+
+        return $this->__resolver;
+    }
+    
+    public function setResolver(ResolverInterface  $resolver)
+    {
+        $this->__resolver = $resolver;
     }
 
     public function getEngine()
@@ -84,45 +116,30 @@ class SmartyRenderer extends PhpRenderer
 
     public function render($name, $vars=null)
     {
-    	if ( $name instanceof ViewModel )
-    	{
-	    	$model = $name;
-            $name = $model->getTemplate();
-            if (empty($name)) {
-                throw new Exception\DomainException(sprintf(
-                    '%s: received View Model argument, but template is empty',
-                    __METHOD__
-                ));
-            }
+    	$model = $name;
+        $name = $model->getTemplate();
+        if (empty($name)) {
+            throw new Exception\DomainException(sprintf(
+                '%s: received View Model argument, but template is empty',
+                __METHOD__
+            ));
+        }
 
-            // Give view model awareness via ViewModel helper
-            $helper = $this->plugin('view_model');
-            $helper->setCurrent($model);
+        // Give view model awareness via ViewModel helper
+        $helper = $this->plugin('view_model');
+        $helper->setCurrent($model);
 
-            foreach($model->getVariables() as $key => $value)
-            {
-	            $this->assign($key, $value);
-            }
-            $this->assign('renderer', $this);
-            
-            unset($model);
-            
-            $this->file = $this->resolver($name);
-            
-            return $this->getFilterChain()->filter($this->_smarty->fetch($this->file));
-    	}
-    	else
-    	{
-	    	if (null !== $vars)
-	    	{
-	            foreach($vars as $k=>$v)
-	            {
-	                $this->assign($k,$v);
-	            }
-	        }
-	        $this->file = $this->resolver($name);
-	        $this->this = $this;
-	        return $this->getFilterChain()->filter($this->_smarty->fetch($this->file));
-    	}
+        foreach($model->getVariables() as $key => $value)
+        {
+            $this->assign($key, $value);
+        }
+        $this->assign('renderer', $this);
+        
+        unset($model);
+        
+        $this->file = $this->resolver($name);
+        
+        $content = $this->_smarty->fetch($this->file);
+        return $content;
     }
 }
