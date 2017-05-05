@@ -1,12 +1,10 @@
 # Zend Smarty
-================
 
 A Smarty Module for Zend Framework 2. **As of 0.3, it is now compatible with Zend Expressive as well, but your package must will require `zendframework/zend-expressive-zendviewrenderer`, or that you select `Zend View Manager` as your renderer during the Zend Expressive quick set up.**.
 
 This package is designed to *properly* implement Smarty into the Zend Framework, unlike other approaches this one mimics the way ZF 2 works. It creates View Model, Strategy, and Renderers and provides factories to them.
 
 ## Limitation
-=============
 
 You need to change all of your template names in your module.config.php to point at .tpl files. The .tpl extension will trigger the
 Smarty view rendering strategy and everything will work as you want. Access to `$this` inside the smarty file is doable via 
@@ -15,7 +13,6 @@ Smarty view rendering strategy and everything will work as you want. Access to `
 Regular Smarty limitations apply, which makes it not always easy to change a phtml file to a tpl file. You can pass functions in and call them via `{call_user_func...}`, and you can pass in arrays but they must use square bracket syntax `{if in_array(4, [1,2,3,4])}`.
 
 ## Instructions
-==========
 
 1. Get this package. You can get this package through composer now. Running `composer require ryanknu/zendsmarty` will download this package.
 2. Get Smarty. I do not bundle it as a dependency because I want to be compatible with any Smarty you want. Typing `composer require smarty/smarty` will get you the latest version.
@@ -26,7 +23,6 @@ Regular Smarty limitations apply, which makes it not always easy to change a pht
 ```
 
 ## Instructions (OLD STYLE)
-==========
 
 1. Download the source of this, copy ZSmarty to Project/vendor/ZSmarty
 2. Add 'ZSmarty' to the module list in config/application.config.php
